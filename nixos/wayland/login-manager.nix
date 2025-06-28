@@ -5,7 +5,7 @@ services.greetd = {
   settings = rec {
     initial_session = {
       command = "${pkgs.sway}/bin/sway";
-      user = "simon";
+      user = "veltair";
     };
     default_session = initial_session;
   };
