@@ -1,28 +1,21 @@
+# Edit this configuration file to define what should be installed on 
+# your system. Help is available in the configuration.nix(5) man page 
+# and in the NixOS manual (accessible by running "nixos-help")
+
 { config, pkgs, ... }:
+
 {
-  #silent boot
-  disabledModules = ["system/boot/stage-2.nix" "system/boot/stage-1.nix" "system/etc/etc.nix"];  
 
   imports =
     [
-	#silent boot
-	./silent-boot/stage-2-silent.nix
-	./silent-boot/stage-1-silent.nix
-	./silent-boot/etc-silent.nix
-	./silent-boot/boot.nix      
- 
-	#hardware optimization
-	./hardware-optimization/framework-specific.nix	
-	./hardware-optimization/hardware-configuration.nix
-	./hardware-optimization/video-acceleration.nix
-	./hardware-optimization/ssd.nix
+
 
 	#audio
 	./audio/general.nix
-	./audio/bluetooth.nix
+##	./audio/bluetooth.nix
         
 	#networking
-	./networking/networks.nix
+##	./networking/networks.nix
 	
 	#wayland
 	./wayland/general.nix
@@ -30,33 +23,61 @@
 	./wayland/login-manager.nix
     ];
 
-  time.timeZone = "Europe/Bratislava";
+#Bootloader
+boot.loader.grub.enable = true;
+boot.loader.grub.device = "/dev/sda";
+boot.loader.grub.useOSProber = true;
+
+networking.hostName = "nixos"; # Define your hostName
+# networking.wireless.enable = true # Enables wireless support via wpa_supplicant
+
+# Enable networking
+networking.networkmanager.enable = true;
+
+
+  time.timeZone = "America/Lima";
+
+# Locale properties
+i18n.defaultLocale = "en_US.UTF-8";
+
+
 
   environment.sessionVariables = rec {
     XDG_CONFIG_HOME = "\${HOME}/.config";
     XCURSOR_SIZE = "24";
   };
     
-  users.users.simon = {
+  users.users.veltair = {
      isNormalUser = true;
-     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
+     extraGroups = [ "wheel" "networkmanager" ]; # Enable ‘sudo’ for the user.
+     packages = with pkgs; [
+
+     ];
    };
+
+   nixpkgs.config.allowUnfree = true;
   
   environment.systemPackages = with pkgs; [
     vim
+    neovim
     wget
     tmux
-    freshfetch
+    fastfetch
+    vi
    ];
   
+  # Some programs need SUID wrappers, can be configured further or 
+  # are started in user sessions.
   #programs.mtr.enable = true;
   #programs.gnupg.agent = {
   #  enable = true;
   #  enableSSHSupport = true;
   #};
 
+  # List services that you want to enable
+
   #services.openssh.enable = true;
   services.printing.enable = true;    
  
-  system.stateVersion = "22.11";
+  system.stateVersion = "25.05";
 }
